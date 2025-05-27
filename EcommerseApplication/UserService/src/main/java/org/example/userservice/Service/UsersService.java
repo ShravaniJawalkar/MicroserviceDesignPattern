@@ -54,7 +54,7 @@ public class UsersService {
     }
 
 
-    public UserResponse getUserById(UUID id) {
+    public UserResponse getUserById(Long id) {
         Users user = userRepository.findById(id).orElse(null);
 
         UserResponse response = null;

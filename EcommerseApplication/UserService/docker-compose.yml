@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres-userservice
+    environment:
+      POSTGRES_DB: UserService
+      POSTGRES_USER: ecommerceUser
+      POSTGRES_PASSWORD: user1234
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ecommerceUser -d UserService"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  liquibase:
+    image: liquibase/liquibase:4.24-alpine
+    container_name: liquibase-migration
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      LIQUIBASE_COMMAND_URL: jdbc:postgresql://postgres:5432/UserService
+      LIQUIBASE_COMMAND_USERNAME: ecommerceUser
+      LIQUIBASE_COMMAND_PASSWORD: user1234
+      LIQUIBASE_COMMAND_CHANGELOG_FILE: changelog-master.xml
+    volumes:
+      - ./src/main/resources/db/changelog:/liquibase/changelog
+      - ./src/main/resources/liquibase.properties:/liquibase/liquibase.properties
+    networks:
+      - app-network
+    command: ["liquibase", "update"]
+    restart: "no"
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
