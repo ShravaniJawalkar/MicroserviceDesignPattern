@@ -1,5 +1,6 @@
 package org.example.userservice.Controller;
 
+import jakarta.validation.Valid;
 import org.example.userservice.Dao.UserLoginRequest;
 import org.example.userservice.Dao.UserRegistrationRequest;
 import org.example.userservice.Dao.UserResponse;
@@ -17,12 +18,12 @@ public class UserController {
     UsersService usersService;
 
     @PostMapping("/register")
-    public UserResponse registerUser(@RequestBody UserRegistrationRequest userRequest){
+    public UserResponse registerUser(@Valid @RequestBody UserRegistrationRequest userRequest){
         System.out.println("Received user: " + userRequest.getUsername());
         return usersService.registerUser(userRequest);
     }
     @PostMapping("/login")
-    public UserResponse loginUser(@RequestBody UserLoginRequest userRequest){
+    public UserResponse loginUser(@Valid @RequestBody UserLoginRequest userRequest){
 
         return usersService.loginUser(userRequest);
     }

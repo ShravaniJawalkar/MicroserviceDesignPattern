@@ -48,12 +48,14 @@ public class UsersService {
             return response;
         }
         response = new UserResponse();
+        response.setUserId(user.getId());
+        response.setUserName(user.getUsername());
         response.setResponseCode("200");
         return response;
     }
-
+    @Transactional
     public UserResponse loginUser(UserLoginRequest request) {
-        Users user = userRepository.findByUsernameAfterAndPassword(request.getUsername(), request.getPassword());
+        Users user = userRepository.findByUsernameAndPassword(request.getUsername(), request.getPassword());
         UserResponse response = null;
         if (user == null) {
             response = new UserResponse();
@@ -61,6 +63,8 @@ public class UsersService {
             return response;
         }
         response = new UserResponse();
+        response.setUserId(user.getId());
+        response.setUserName(user.getUsername());
         response.setResponseCode("200");
         return response;
     }

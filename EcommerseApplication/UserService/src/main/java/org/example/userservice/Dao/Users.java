@@ -37,7 +37,8 @@ public class Users {
     @Column(name = "phone")
     private String phone;
     @Lob
-    @Column(name = "address")
+    @Basic(fetch = FetchType.EAGER)
+    @Column(name = "address" , columnDefinition = "TEXT")
     private String address;
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
