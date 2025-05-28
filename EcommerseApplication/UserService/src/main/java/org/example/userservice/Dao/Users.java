@@ -24,7 +24,7 @@ public class Users {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "username", nullable = false, unique = true)
     private String username;
@@ -39,11 +39,6 @@ public class Users {
     @Lob
     @Column(name = "address")
     private String address;
-
-//    @Enumerated(EnumType.STRING)
-//    @Column(name = "role", nullable = false)
-//    private Role role;
-
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

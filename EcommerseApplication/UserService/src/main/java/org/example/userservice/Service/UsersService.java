@@ -11,6 +11,7 @@ import org.example.userservice.Repository.UserRepository;
 import org.example.userservice.Repository.UserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -23,9 +24,11 @@ public class UsersService {
     @Autowired
     private UserRoleRepository userRoleRepository;
 
+    @Transactional
     public UserResponse registerUser(UserRegistrationRequest request) {
         // Validate the request
         Users user = new Users();
+        user.setUsername(request.getUsername());
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
@@ -49,7 +52,9 @@ public class UsersService {
         Set<UserRole> userRoles = new HashSet<>();
         UserRole userRole = new UserRole();
         userRole.setRole(Role.valueOf(role));
+        userRole.getUser().add(user);
         userRoles.add(userRole);
+        userRoleRepository.save(userRole);
         user.setRoles(userRoles);
     }
 

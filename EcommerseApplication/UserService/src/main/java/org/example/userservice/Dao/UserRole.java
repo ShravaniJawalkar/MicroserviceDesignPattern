@@ -1,10 +1,7 @@
 package org.example.userservice.Dao;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -16,11 +13,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = "user")
 public class UserRole {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "role_id", nullable = false, updatable = false)
-    private UUID roleId;
+    private Long roleId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role_name", nullable = false)
