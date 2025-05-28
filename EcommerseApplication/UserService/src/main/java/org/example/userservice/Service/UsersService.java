@@ -1,28 +1,18 @@
 package org.example.userservice.Service;
 
-import lombok.NonNull;
 import org.example.userservice.Dao.UserRegistrationRequest;
 import org.example.userservice.Dao.UserResponse;
 import org.example.userservice.Dao.UserLoginRequest;
 import org.example.userservice.Dao.Users;
-import org.example.userservice.Dao.UserRole;
-import org.example.userservice.Dao.Role;
 import org.example.userservice.Repository.UserRepository;
-import org.example.userservice.Repository.UserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
 
 @Service
 public class UsersService {
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private UserRoleRepository userRoleRepository;
 
     @Transactional
     public UserResponse registerUser(UserRegistrationRequest request) {
@@ -34,7 +24,6 @@ public class UsersService {
         user.setPassword(request.getPassword());
         user.setPhone(request.getPhone());
         user.setAddress(request.getAddress());
-        addRoleToUser(user, request.getRole());
         userRepository.save(user);
         UserResponse response = null;
         if (user.getId() == null) {
@@ -43,21 +32,11 @@ public class UsersService {
             return response;
         }
         response = new UserResponse();
+        response.setUserId(user.getId());
         response.setUserName(user.getUsername());
         response.setResponseCode("200");
         return response;
     }
-
-    private void addRoleToUser(Users user, @NonNull String role) {
-        Set<UserRole> userRoles = new HashSet<>();
-        UserRole userRole = new UserRole();
-        userRole.setRole(Role.valueOf(role));
-        userRole.getUser().add(user);
-        userRoles.add(userRole);
-        userRoleRepository.save(userRole);
-        user.setRoles(userRoles);
-    }
-
 
     public UserResponse getUserById(Long id) {
         Users user = userRepository.findById(id).orElse(null);

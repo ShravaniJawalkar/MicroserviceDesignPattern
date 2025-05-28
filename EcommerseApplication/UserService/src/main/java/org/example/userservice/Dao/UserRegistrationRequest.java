@@ -20,7 +20,5 @@ public class UserRegistrationRequest {
     private String phone;
     @JsonProperty("address")
     private String address;
-    @JsonProperty("role")
-    private String role;
 
 }
