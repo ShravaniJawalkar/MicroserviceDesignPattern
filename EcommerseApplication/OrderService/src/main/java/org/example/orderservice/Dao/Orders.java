@@ -46,10 +46,12 @@ public class Orders {
 
 
     @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderItems> items = new ArrayList<>();
+    private List<OrderItems> items ;
 
-//    public void addItem(OrderItems item) {
-//        items.add(item);
-//        item.setOrders(this);
-//    }
+    public void addItem(OrderItems item) {
+        if (items == null) {
+            items = new ArrayList<>();
+        }
+        items.add(item);
+    }
 }

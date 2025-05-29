@@ -37,23 +37,27 @@ public class OrderService {
         if (!userExists) {
             throw new IllegalArgumentException("User with ID " + orderRequest.getUserId() + " does not exist");
         }
-        Optional<Orders> orders = orderRepository.findByUserId(orderRequest.getUserId());
+
+        // Create and save the order
+        Orders order = Orders.builder()
+                .userId(orderRequest.getUserId())
+                .totalAmount(orderRequest.getPrice().multiply(BigDecimal.valueOf(orderRequest.getQuantity())))
+                .status(OrderStatus.PENDING)
+                .build();
+        order = orderRepository.save(order);
+
         OrderItems orderItems = OrderItems.builder()
                 .price(orderRequest.getPrice())
                 .productId(orderRequest.getProductId())
                 .quantity(orderRequest.getQuantity())
-                .orders(orders.orElse(new Orders()))
                 .totalPrice(orderRequest.getPrice().multiply(BigDecimal.valueOf(orderRequest.getQuantity())))
                 .build();
+
+        order.addItem(orderItems);
+        orderItems.setOrders(order);
         orderItemsRepository.save(orderItems);
-        // Create and save the order
-        Orders order = Orders.builder()
-                .userId(orderRequest.getUserId())
-                .totalAmount(orderItems.getTotalPrice())
-                .status(OrderStatus.PENDING)
-                .items(List.of(orderItems))
-                .build();
-        order = orderRepository.save(order);
+
+//        orderItemsRepository.save(orderItems);
         if (order.getId() == null) {
             throw new HttpClientErrorException(HttpStatus.UNPROCESSABLE_ENTITY);
         }
@@ -86,6 +90,7 @@ public class OrderService {
                 orderResponse.setStatus(String.valueOf(orders.getStatus()));
                 orderResponse.setOrderDetails(orders.getItems().stream()
                         .map(item -> OrderItemsDetails.builder()
+                                .itemId(item.getId())
                                 .productId(item.getProductId())
                                 .quantity(item.getQuantity())
                                 .totalPrice(item.getTotalPrice())
