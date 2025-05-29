@@ -6,6 +6,8 @@ import org.example.userservice.Dao.UserRegistrationRequest;
 import org.example.userservice.Dao.UserResponse;
 import org.example.userservice.Service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -18,18 +20,20 @@ public class UserController {
     UsersService usersService;
 
     @PostMapping("/register")
-    public UserResponse registerUser(@Valid @RequestBody UserRegistrationRequest userRequest){
+    public ResponseEntity<UserResponse> registerUser(@Valid @RequestBody UserRegistrationRequest userRequest){
         System.out.println("Received user: " + userRequest.getUsername());
-        return usersService.registerUser(userRequest);
+        UserResponse userResponse= usersService.registerUser(userRequest);
+        return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
     @PostMapping("/login")
-    public UserResponse loginUser(@Valid @RequestBody UserLoginRequest userRequest){
-
-        return usersService.loginUser(userRequest);
+    public ResponseEntity<UserResponse> loginUser(@Valid @RequestBody UserLoginRequest userRequest){
+        UserResponse userResponse = usersService.loginUser(userRequest);
+        return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public UserResponse getUserById(@PathVariable Long id){
-        return usersService.getUserById(id);
+    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id){
+        UserResponse userResponse= usersService.getUserById(id);
+        return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
 }

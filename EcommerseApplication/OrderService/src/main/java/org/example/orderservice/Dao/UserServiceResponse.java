@@ -1,6 +1,5 @@
-package org.example.userservice.Dao;
+package org.example.orderservice.Dao;
 
-import jakarta.persistence.Lob;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserResponse {
+public class UserServiceResponse {
     private Long userId;
     private String userName;
+    private String responseCode;
 }
