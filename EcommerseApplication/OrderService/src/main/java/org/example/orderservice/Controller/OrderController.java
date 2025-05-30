@@ -1,5 +1,6 @@
 package org.example.orderservice.Controller;
 
+import jakarta.validation.Valid;
 import org.example.orderservice.Dao.OrderDetails;
 import org.example.orderservice.Dao.OrderRequest;
 import org.example.orderservice.Dao.OrderResponse;
@@ -16,11 +17,11 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping("/place-order")
-    public ResponseEntity<OrderResponse> placeOrder(@RequestBody OrderRequest orders) {
+    public ResponseEntity<OrderResponse> placeOrder(@Valid @RequestBody OrderRequest orders) {
         return  orderService.createOrder(orders);
     }
 
-    @PostMapping("/{orderId}/status")
+    @PutMapping("/{orderId}/status")
     public ResponseEntity<String> updateOrderStatus(@PathVariable long orderId, @RequestBody String status) {
         String responseStatus = orderService.updateOrderStatus(orderId, status);
         return new ResponseEntity<>(responseStatus, HttpStatus.OK);

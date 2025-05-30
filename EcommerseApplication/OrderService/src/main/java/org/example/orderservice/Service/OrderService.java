@@ -1,5 +1,6 @@
 package org.example.orderservice.Service;
 
+import jakarta.validation.constraints.NotNull;
 import org.example.orderservice.Dao.*;
 import org.example.orderservice.Repository.OrderItemsRepository;
 import org.example.orderservice.Repository.OrderRepository;
@@ -30,14 +31,15 @@ public class OrderService {
     @Value("${user.service.url}")
     private String userServiceUrl;
 
+    @Value("${product.service.url}")
+    private String productServiceUrl;
+
     @Transactional
     public ResponseEntity<OrderResponse> createOrder(OrderRequest orderRequest) {
-        // Validate if user exists in UserService
-        boolean userExists = validateUser(orderRequest.getUserId());
-        if (!userExists) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        ResponseEntity<OrderResponse> response =  validateRequest(orderRequest);
+        if(response.getStatusCode() != HttpStatus.OK) {
+            return response;
         }
-
         // Create and save the order
         Orders order = Orders.builder()
                 .userId(orderRequest.getUserId())
@@ -62,6 +64,56 @@ public class OrderService {
         OrderResponse orderResponse = new OrderResponse();
         orderResponse.setOrderId(order.getId());
         return new ResponseEntity<>(orderResponse,HttpStatus.OK);
+    }
+
+    private ResponseEntity<OrderResponse> validateRequest(OrderRequest orderRequest) {
+        // Validate if user exists in UserService
+        boolean userExists = validateUser(orderRequest.getUserId());
+        if (!userExists) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        boolean productAvailable = existsByProductId(orderRequest.getProductId());
+        if (!productAvailable) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // Get product details from ProductService
+
+        ProductResponse productResponse = getProductDetails(orderRequest.getProductId());
+        if(productResponse==null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        // Validate product price and quantity
+        if (orderRequest.getPrice().compareTo(BigDecimal.valueOf(productResponse.getPrice())) != 0) {
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        if( orderRequest.getQuantity() <= 0 || orderRequest.getQuantity().compareTo(productResponse.getQuantity()) != 0) {
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private boolean existsByProductId(@NotNull Long productId) {
+        try {
+            String url = productServiceUrl + "/api/products/" + productId;
+            ResponseEntity<ProductResponse> response = restTemplate.getForEntity(url, ProductResponse.class);
+            return response.getStatusCode() == HttpStatus.OK;
+        } catch (HttpClientErrorException.NotFound e) {
+            return false;
+        }
+
+    }
+
+    private ProductResponse getProductDetails(@NotNull Long productId) {
+        try {
+            String url = productServiceUrl + "/api/products/" + productId;
+            ResponseEntity<ProductResponse> response = restTemplate.getForEntity(url, ProductResponse.class);
+            return response.getBody();
+        } catch (HttpClientErrorException.NotFound e) {
+            return null;
+        }
+
     }
 
     private boolean validateUser(Long userId) {
