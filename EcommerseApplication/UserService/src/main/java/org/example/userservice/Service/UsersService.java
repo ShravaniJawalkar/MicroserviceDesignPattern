@@ -8,6 +8,7 @@ import org.example.userservice.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
@@ -18,7 +19,7 @@ public class UsersService {
     private UserRepository userRepository;
 
     @Transactional
-    public UserResponse registerUser(UserRegistrationRequest request) {
+    public ResponseEntity<UserResponse> registerUser(UserRegistrationRequest request) {
         // Validate the request
         Users user = new Users();
         user.setUsername(request.getUsername());
@@ -29,35 +30,35 @@ public class UsersService {
         user.setAddress(request.getAddress());
         userRepository.save(user);
         if (user.getId() == null) {
-            throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR,"User is Not Created");
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         UserResponse response = new UserResponse();
         response.setUserId(user.getId());
         response.setUserName(user.getUsername());
-        return response;
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    public UserResponse getUserById(Long id) {
+    public ResponseEntity<UserResponse> getUserById(Long id) {
         Users user = userRepository.findById(id).orElse(null);
         if (user == null) {
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND,"User not found with id: " + id);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         UserResponse response = new UserResponse();
         response.setUserId(user.getId());
         response.setUserName(user.getUsername());
-        return response;
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     @Transactional
-    public UserResponse loginUser(UserLoginRequest request) {
+    public ResponseEntity<UserResponse> loginUser(UserLoginRequest request) {
         Users user = userRepository.findByUsernameAndPassword(request.getUsername(), request.getPassword());
         UserResponse response = null;
         if (user == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,"Invalid username or password");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         response = new UserResponse();
         response.setUserId(user.getId());
         response.setUserName(user.getUsername());
-        return response;
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }

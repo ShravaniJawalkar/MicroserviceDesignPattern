@@ -31,11 +31,11 @@ public class OrderService {
     private String userServiceUrl;
 
     @Transactional
-    public OrderResponse createOrder(OrderRequest orderRequest) {
+    public ResponseEntity<OrderResponse> createOrder(OrderRequest orderRequest) {
         // Validate if user exists in UserService
         boolean userExists = validateUser(orderRequest.getUserId());
         if (!userExists) {
-            throw new IllegalArgumentException("User with ID " + orderRequest.getUserId() + " does not exist");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         // Create and save the order
@@ -56,14 +56,12 @@ public class OrderService {
         order.addItem(orderItems);
         orderItems.setOrders(order);
         orderItemsRepository.save(orderItems);
-
-//        orderItemsRepository.save(orderItems);
         if (order.getId() == null) {
-            throw new HttpClientErrorException(HttpStatus.UNPROCESSABLE_ENTITY);
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
         OrderResponse orderResponse = new OrderResponse();
         orderResponse.setOrderId(order.getId());
-        return orderResponse;
+        return new ResponseEntity<>(orderResponse,HttpStatus.OK);
     }
 
     private boolean validateUser(Long userId) {
@@ -77,11 +75,11 @@ public class OrderService {
         }
     }
 
-    public OrderDetails getOrderById(Long orderId) {
+    public ResponseEntity<OrderDetails> getOrderById(Long orderId) {
         Optional<Orders> order = orderRepository.findById(orderId);
         OrderDetails orderResponse = new OrderDetails();
         if (order.isEmpty()) {
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Order with ID " + orderId + " does not exist");
+            return new ResponseEntity<>(orderResponse, HttpStatus.NOT_FOUND);
         } else {
             order.ifPresent(orders -> {
                 orderResponse.setOrderId(orders.getId());
@@ -99,7 +97,7 @@ public class OrderService {
             });
 
         }
-        return orderResponse;
+        return new ResponseEntity<>(orderResponse,HttpStatus.OK);
     }
 
     private String getUserName(Long userId) {
@@ -135,7 +133,7 @@ public class OrderService {
         }
     }
 
-    public OrderDetails getOrderByUserId(long userId) {
+    public ResponseEntity<OrderDetails> getOrderByUserId(long userId) {
         OrderDetails orderResponse = new OrderDetails();
         orderRepository.findByUserId(userId).ifPresentOrElse(order -> {
             Orders typeOrder = (Orders) order;
@@ -153,6 +151,6 @@ public class OrderService {
         }, () -> {
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Order with User ID " + userId + " does not exist");
         });
-        return orderResponse;
+        return new ResponseEntity<>(orderResponse,HttpStatus.OK);
     }
 }

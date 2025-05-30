@@ -17,8 +17,7 @@ public class OrderController {
 
     @PostMapping("/place-order")
     public ResponseEntity<OrderResponse> placeOrder(@RequestBody OrderRequest orders) {
-              OrderResponse orderResponse= orderService.createOrder(orders);
-        return new ResponseEntity<>(orderResponse, HttpStatus.OK);
+        return  orderService.createOrder(orders);
     }
 
     @PostMapping("/{orderId}/status")
@@ -29,14 +28,12 @@ public class OrderController {
 
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderDetails> getOrder(@PathVariable long orderId) {
-       OrderDetails response = orderService.getOrderById(orderId);
-       return new ResponseEntity<>(response, HttpStatus.OK);
+       return  orderService.getOrderById(orderId);
     }
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<OrderDetails> getUserOrder(@PathVariable long userId) {
-        OrderDetails response = orderService.getOrderByUserId(userId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return orderService.getOrderByUserId(userId);
     }
 
     @DeleteMapping("/{orderId}")

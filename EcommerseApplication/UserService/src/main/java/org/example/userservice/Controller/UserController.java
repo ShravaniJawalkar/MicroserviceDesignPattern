@@ -22,18 +22,15 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<UserResponse> registerUser(@Valid @RequestBody UserRegistrationRequest userRequest){
         System.out.println("Received user: " + userRequest.getUsername());
-        UserResponse userResponse= usersService.registerUser(userRequest);
-        return new ResponseEntity<>(userResponse, HttpStatus.OK);
+        return usersService.registerUser(userRequest);
     }
     @PostMapping("/login")
     public ResponseEntity<UserResponse> loginUser(@Valid @RequestBody UserLoginRequest userRequest){
-        UserResponse userResponse = usersService.loginUser(userRequest);
-        return new ResponseEntity<>(userResponse, HttpStatus.OK);
+        return  usersService.loginUser(userRequest);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id){
-        UserResponse userResponse= usersService.getUserById(id);
-        return new ResponseEntity<>(userResponse, HttpStatus.OK);
+        return usersService.getUserById(id);
     }
 }
