@@ -99,13 +99,9 @@ public class OrderService {
 
     @CircuitBreaker(name = "ProductService", fallbackMethod = "existsByProductIdFallBack")
     public boolean existsByProductId(@NotNull Long productId) {
-        try {
             String url = productServiceUrl + "/api/products/" + productId;
             ResponseEntity<ProductResponse> response = restTemplate.getForEntity(url, ProductResponse.class);
             return response.getStatusCode() == HttpStatus.OK;
-        } catch (HttpClientErrorException.NotFound e) {
-            return false;
-        }
 
     }
 
@@ -117,14 +113,9 @@ public class OrderService {
 
     @CircuitBreaker(name = "ProductService", fallbackMethod = "getProductDetailsFallBack")
     public ProductResponse getProductDetails(@NotNull Long productId) {
-        try {
             String url = productServiceUrl + "/api/products/" + productId;
             ResponseEntity<ProductResponse> response = restTemplate.getForEntity(url, ProductResponse.class);
             return response.getBody();
-        } catch (HttpClientErrorException.NotFound e) {
-            return null;
-        }
-
     }
 
     public ProductResponse getProductDetailsFallBack(Long productId, Exception e) {
@@ -136,14 +127,10 @@ public class OrderService {
 
     @CircuitBreaker(name = "UserService", fallbackMethod = "validateUserFallBack")
     public boolean validateUser(Long userId) {
-        try {
             // Example REST call to UserService
             String url = userServiceUrl + "/api/users/" + userId;
             ResponseEntity<UserServiceResponse> response = restTemplate.getForEntity(url, UserServiceResponse.class);
             return response.getStatusCode() == HttpStatus.OK; // User exists if 200 OK is returned.
-        } catch (HttpClientErrorException.NotFound e) {
-            return false; // User does not exist.
-        }
     }
 
     public boolean validateUserFallBack(Long userId, Exception e) {

@@ -1,6 +1,7 @@
 package org.example.userservice.Controller;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.example.userservice.Dao.UserLoginRequest;
 import org.example.userservice.Dao.UserRegistrationRequest;
 import org.example.userservice.Dao.UserResponse;
@@ -10,8 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -20,17 +23,23 @@ public class UserController {
     UsersService usersService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> registerUser(@Valid @RequestBody UserRegistrationRequest userRequest){
+    public ResponseEntity<UserResponse> registerUser(@Valid @RequestBody UserRegistrationRequest userRequest) {
         System.out.println("Received user: " + userRequest.getUsername());
         return usersService.registerUser(userRequest);
     }
+
     @PostMapping("/login")
-    public ResponseEntity<UserResponse> loginUser(@Valid @RequestBody UserLoginRequest userRequest){
-        return  usersService.loginUser(userRequest);
+    public ResponseEntity<UserResponse> loginUser(@Valid @RequestBody UserLoginRequest userRequest) {
+        return usersService.loginUser(userRequest);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id){
+    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
+        try {
+            Thread.sleep(Duration.ofSeconds(3));
+        } catch (InterruptedException e) {
+            log.error(e.getMessage());
+        }
         return usersService.getUserById(id);
     }
 }
