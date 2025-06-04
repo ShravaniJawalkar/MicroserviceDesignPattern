@@ -35,11 +35,6 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
-        try {
-            Thread.sleep(Duration.ofSeconds(3));
-        } catch (InterruptedException e) {
-            log.error(e.getMessage());
-        }
         return usersService.getUserById(id);
     }
 }

@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: ApiGateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+          routes:
+            - id: user-service
+              uri: lb://UserService
+              predicates:
+                - Path=/user/**
+              filters:
+                - RewritePath=/user/(?<segment>.*), /$\{segment}
+            - id: product-service
+              uri: lb://ProductService
+              predicates:
+                - Path=/product/**
+              filters:
+                - RewritePath=/product/(?<segment>.*), /$\{segment}
+            - id: order-service
+              uri: lb://OrderService
+              predicates:
+                - Path=/order/**
+              filters:
+                - RewritePath=/order/(?<segment>.*), /$\{segment}
+
+server:
+  port: 9001
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8087/eureka/
+
