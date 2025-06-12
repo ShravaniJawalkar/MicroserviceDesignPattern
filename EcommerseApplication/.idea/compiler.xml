@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="EurekDiscovery" />
         <module name="ApiGateway" />
+        <module name="ConfigServer" />
       </profile>
       <profile name="Annotation profile for UserService" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -28,6 +29,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="ApiGateway" options="-parameters" />
       <module name="CartService" options="-parameters" />
+      <module name="ConfigServer" options="-parameters" />
       <module name="EurekDiscovery" options="-parameters" />
       <module name="OrderService" options="-parameters" />
       <module name="ProductService" options="-parameters" />
