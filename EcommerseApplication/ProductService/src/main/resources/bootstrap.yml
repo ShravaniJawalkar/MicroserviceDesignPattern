@@ -3,4 +3,10 @@ spring:
     name: Product-Service
   cloud:
     config:
-      uri: http://localhost:8888
+      name: toe-config-server
+      uri: http://localhost:8888/config
+      retry:
+        initial-interval: 8000
+        multiplier: 1.2
+        max-interval: 9000
+        max-attempt: 3
