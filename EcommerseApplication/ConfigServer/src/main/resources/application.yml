@@ -1,23 +1,23 @@
-spring:
-  application:
-    name: config-server
-  profiles:
-    active: native
-    include: native
-  cloud:
-    config:
-      server:
-        native:
-          search-locations: classpath:config/
-#        prefix: /config
-  jpa:
-    hibernate:
-      ddl-auto: update
-
 server:
   servlet:
     context-path: /
   port: 8888
+
+spring:
+  application:
+    name: config-server
+  #  profiles:
+  #    active: native, local
+  #    include: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:config/ # This means config server looks for files in 'src/main/resources/config/'
+  #        prefix: /config
+  jpa:
+    hibernate:
+      ddl-auto: update
 
 management:
   endpoints:
@@ -34,11 +34,5 @@ management:
       enabled: true
     refresh:
       enabled: true
-
-
-eureka:
-  client:
-    fetch-registry: true
-    register-with-eureka: true
-    service-url.defaultZone: http://localhost:8087/eureka/
-
+    env:
+      show-values: always

@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/UserService # These will be overridden by application.properties if they exist there too
+    driver-class-name: org.postgresql.Driver
+    username: ecommerceUser
+    password: user1234
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+server:
+  port: 8086
+my-custom-property: Hello from dev config!
+
+test:
+  properties: 'config-dev-server'
