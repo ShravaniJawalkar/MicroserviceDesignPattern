@@ -1,6 +1,7 @@
-spring:
-  application:
-    name: Eurek-Discovery
-  cloud:
-    config:
-      uri: http://localhost:8888
+#spring:
+#  application:
+#    name: Eurek-Discovery
+#  cloud:
+#    config:
+#      enabled: false
+##      uri: http://localhost:8888/config

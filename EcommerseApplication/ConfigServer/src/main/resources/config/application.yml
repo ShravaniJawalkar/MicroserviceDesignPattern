@@ -1,11 +1,15 @@
 spring:
-  application: config-server
+  application:
+    name: config-server
+  profiles:
+    active: native
+    include: native
   cloud:
     config:
       server:
         native:
-#          search-locations: classpath:config/
-        prefix: /config
+          search-locations: classpath:config/
+#        prefix: /config
   jpa:
     hibernate:
       ddl-auto: update
@@ -30,7 +34,6 @@ management:
       enabled: true
     refresh:
       enabled: true
-
 
 
 eureka:
