@@ -6,14 +6,16 @@ server:
 spring:
   application:
     name: config-server
-  #  profiles:
-  #    active: native, local
-  #    include: native
+    profiles:
+      active: native  #, local
   cloud:
     config:
       server:
+        git:
+          uri: file:///${user.dir}/config-server/config-repo
+          default-label: master
         native:
-          search-locations: classpath:config/ # This means config server looks for files in 'src/main/resources/config/'
+          search-locations: classpath:config-repo/ # This means config server looks for files in 'src/main/resources/config/'
   #        prefix: /config
   jpa:
     hibernate:
